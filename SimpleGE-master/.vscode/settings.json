@@ -1,0 +1,8 @@
+{
+"cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
+"files.associations": {
+    "format": "cpp",
+    "pointers": "cpp",
+    "array": "cpp"
+}
+}
