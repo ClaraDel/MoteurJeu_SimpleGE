@@ -47,6 +47,16 @@ namespace SimpleGE
 
   [[nodiscard]] bool ColliderComponent::Collides(const ColliderComponent& other) const
   {
+    bool contact = false;
+    
+    if (((impl->mask & other.impl->flag) != 0) || ((other.impl->mask & impl->flag) != 0)){
+      contact = true;
+    }
+    
+    if (!contact) {
+      return false;
+    }
+
     return GetArea().Intersects(other.GetArea());
   }
 

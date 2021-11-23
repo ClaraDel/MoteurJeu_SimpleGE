@@ -6,6 +6,8 @@
 
 #include <simplege/math.h>
 
+#include <iostream>
+
 namespace SimpleGE
 {
   class CollisionComponent;
