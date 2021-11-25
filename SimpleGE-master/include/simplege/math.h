@@ -207,7 +207,7 @@ namespace SimpleGE
 
   struct Area
   {
-    Area() = default;
+    Area() = default; 
 
     Area(float x, float y, float width, float height) : position({x, y}), size({width, height}) {}
 

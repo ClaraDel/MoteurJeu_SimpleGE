@@ -42,4 +42,49 @@ namespace SimpleGE
   private:
     std::unique_ptr<ColliderImpl> impl;
   };
+
+
+  struct Rectangle
+  {
+    //Position en haut à gauche du rectangle
+    float x ; 
+    float y ;
+    //dimension du rectangle
+    float width ;
+    float height ;
+
+    Rectangle(float _x, float _y, float _width, float _height)
+    {
+      x = _x;
+      y = _y;
+          width = _width ;
+          height = _height ;
+    }
+  };
+
+  class QuadTree
+  {
+    public :
+    Rectangle *rectangle ;
+    QuadTree(int level, float x, float y, float width, float height) ;
+
+    void clear();
+    void split();
+    int getIndex(ColliderComponent &element);
+    void insert(ColliderComponent &element);
+    std::vector<ColliderComponent> retrieve(std::vector<ColliderComponent> returnObj, ColliderComponent &element);
+	
+
+    private :
+    int maxComponent = 2;
+    int maxLevels = 5 ;
+    int level ;
+    std::vector<ColliderComponent> objects;
+    std::vector<QuadTree*> nodes;
+    
+    
+    
+  
+
+  };
 } // namespace SimpleGE

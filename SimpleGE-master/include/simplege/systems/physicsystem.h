@@ -11,9 +11,20 @@ namespace SimpleGE
   class PhysicSystem : public ISystem
   {
   public:
+    QuadTree* quadTree;
     static PhysicSystem& Instance()
     {
       static PhysicSystem instance;
+      
+      //récupère les dimentions de la fenêtre
+      const auto* currentCamera = CameraComponent::Current();
+      Ensures(currentCamera != nullptr);
+      const auto viewWidth = currentCamera->ViewWidth();
+      const auto viewHeight = currentCamera->ViewHeight();
+
+      //créée un quadTree
+      instance.quadTree = new QuadTree(0, 0, 0, viewWidth, viewHeight);
+      
       return instance;
     }
 
@@ -30,6 +41,12 @@ namespace SimpleGE
     {
       std::vector<gsl::not_null<ColliderComponent*>> collidersVec;
       collidersVec.reserve(colliders.size());
+
+      quadTree->clear();
+      for (int i = 0; i < collidersVec.size(); i++) {
+        quadTree->insert(allObjects.get(i));
+      } //TODO
+
       for (auto c : colliders)
       {
         if (c->Enabled() && c->Owner().Active())
