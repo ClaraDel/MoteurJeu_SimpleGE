@@ -39,13 +39,9 @@ namespace SimpleGE
 
     void Iterate(const Timing& timing) override
     {
+      std::cout << 1 << std::endl;
       std::vector<gsl::not_null<ColliderComponent*>> collidersVec;
       collidersVec.reserve(colliders.size());
-
-      quadTree->clear();
-      for (int i = 0; i < collidersVec.size(); i++) {
-        quadTree->insert(allObjects.get(i));
-      } //TODO
 
       for (auto c : colliders)
       {
@@ -54,9 +50,17 @@ namespace SimpleGE
           collidersVec.push_back(c);
         }
       }
+      
+      std::cout << 2 << std::endl;
+      quadTree->clear();
+      for (int i = 0; i < collidersVec.size(); i++) {
+        quadTree->insert(collidersVec[i]);
+      } //TODO
+      std::cout << 3 << std::endl;
+
       std::vector<std::pair<gsl::not_null<ColliderComponent*>, gsl::not_null<ColliderComponent*>>> collisions;
 
-      for (int i = 0; i < collidersVec.size(); i++)
+      /*for (int i = 0; i < collidersVec.size(); i++)
       {
         auto c1 = collidersVec[i];
 
@@ -69,13 +73,24 @@ namespace SimpleGE
             collisions.emplace_back(c1, c2);
           }
         }
+      }*/
+
+      for (int i = 0; i < collidersVec.size(); i++){
+          std::vector<ColliderComponent*> returnObjects;
+          returnObjects = quadTree->retrieve(returnObjects, collidersVec[i]);
+
+          for(int j = 0; j < returnObjects.size(); j++){
+            collisions.emplace_back(collidersVec[i],returnObjects[j]);
+          }
       }
+      std::cout << 4 << std::endl;
 
       for (auto col : collisions)
       {
         col.first->OnCollision(*col.second);
         col.second->OnCollision(*col.first);
       }
+      std::cout << 5 << std::endl;
     }
 
   private:

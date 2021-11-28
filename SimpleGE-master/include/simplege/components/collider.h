@@ -57,8 +57,8 @@ namespace SimpleGE
     {
       x = _x;
       y = _y;
-          width = _width ;
-          height = _height ;
+      width = _width ;
+      height = _height ;
     }
   };
 
@@ -70,16 +70,16 @@ namespace SimpleGE
 
     void clear();
     void split();
-    int getIndex(ColliderComponent &element);
-    void insert(ColliderComponent &element);
-    std::vector<ColliderComponent> retrieve(std::vector<ColliderComponent> returnObj, ColliderComponent &element);
+    int getIndex(ColliderComponent* element);
+    void insert(ColliderComponent* element);
+    std::vector<ColliderComponent*> retrieve(std::vector<ColliderComponent*>& returnObj, ColliderComponent* element);
 	
 
     private :
     int maxComponent = 2;
     int maxLevels = 5 ;
     int level ;
-    std::vector<ColliderComponent> objects;
+    std::vector<ColliderComponent*> objects;
     std::vector<QuadTree*> nodes;
     
     

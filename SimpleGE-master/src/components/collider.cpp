@@ -97,9 +97,9 @@ namespace SimpleGE
         nodes[3] = new QuadTree(level + 1, rectangle->x + rectangle->width/2 , rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
     } 
 
-    int QuadTree::getIndex(ColliderComponent &element){
+    int QuadTree::getIndex(ColliderComponent* element){
         int index =-1;
-        Area elementArea = element.GetArea();
+        Area elementArea = element->GetArea();
         float horizontalMidPoint = rectangle->x + rectangle->width/2;
         float verticalMidPoint = rectangle->y + rectangle->height/2;
 
@@ -126,8 +126,8 @@ namespace SimpleGE
         
     }
     
-    void QuadTree::insert(ColliderComponent &element){
-        Area elementArea = element.GetArea();
+    void QuadTree::insert(ColliderComponent* element){
+        Area elementArea = element->GetArea();
         Rectangle* elementRect = new Rectangle(elementArea.xMin() , elementArea.yMin() , elementArea.width() , elementArea.height());
         
         if (nodes[0] != nullptr) //check si le quadtree a été divisé
@@ -158,10 +158,10 @@ namespace SimpleGE
         }
     }
     
-    std::vector<ColliderComponent> QuadTree::retrieve(std::vector<ColliderComponent> returnObj, ColliderComponent &element){
+    std::vector<ColliderComponent*> QuadTree::retrieve(std::vector<ColliderComponent*>& returnObj, ColliderComponent* element){
       int index = getIndex(element);
       if (index != -1 && nodes[0] != nullptr){
-        nodes[index]->retrieve(returnObj,element);
+        returnObj = nodes[index]->retrieve(returnObj,element);
       }
       for(int i =0 ; i < objects.size(); i++){
         returnObj.push_back(objects[i]);
