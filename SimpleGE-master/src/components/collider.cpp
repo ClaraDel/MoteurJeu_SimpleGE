@@ -79,25 +79,37 @@ namespace SimpleGE
 
   QuadTree::QuadTree(int level, float x, float y, float width, float height)
 	  {
-        rectangle = new Rectangle(x, y, width, height);
+      // ----------------- ENLEVER LE POINTEUR --------------------
+      rectangle = new Rectangle(x, y, width, height);
 	  }
 
   void QuadTree::clear(){
-        objects.clear();
+    try{
+      objects.clear();
         for (int i = 0; i < nodes.size() ; i++){
           nodes[i]->clear();
           nodes[i]=NULL;
         }
+    }catch(std::exception &e){
+      std::cout << e.what() << std::endl;
     }
+  }
 
-    void QuadTree::split(){
-        nodes[0] = new QuadTree(level + 1, rectangle->x , rectangle->y, rectangle->width/2, rectangle->height/2);
-        nodes[1] = new QuadTree(level + 1, rectangle->x + rectangle->width/2, rectangle->y, rectangle->width/2, rectangle->height/2);
-        nodes[2] = new QuadTree(level + 1, rectangle->x ,  rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
-        nodes[3] = new QuadTree(level + 1, rectangle->x + rectangle->width/2 , rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
-    } 
+  void QuadTree::split(){
+    try{
+      // ------------------- UTILISER DES PUSH_BACK ---------------------
+      // ------------------- ENLEVER LES POINTEURS ----------------------
+      nodes[0] = new QuadTree(level + 1, rectangle->x , rectangle->y, rectangle->width/2, rectangle->height/2);
+      nodes[1] = new QuadTree(level + 1, rectangle->x + rectangle->width/2, rectangle->y, rectangle->width/2, rectangle->height/2);
+      nodes[2] = new QuadTree(level + 1, rectangle->x ,  rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
+      nodes[3] = new QuadTree(level + 1, rectangle->x + rectangle->width/2 , rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
+    }catch(std::exception &e){
+      std::cout << e.what() << std::endl;
+    }
+  }    
 
     int QuadTree::getIndex(ColliderComponent* element){
+      try{
         int index =-1;
         Area elementArea = element->GetArea();
         float horizontalMidPoint = rectangle->x + rectangle->width/2;
@@ -123,14 +135,19 @@ namespace SimpleGE
           }
         }
         return index;
-        
+      }catch(std::exception &e){
+        std::cout << e.what() << std::endl;
+      }
     }
     
     void QuadTree::insert(ColliderComponent* element){
+      try{
         Area elementArea = element->GetArea();
+
+        // ----------------Cette variable n'est pas utilisée???--------------------
         Rectangle* elementRect = new Rectangle(elementArea.xMin() , elementArea.yMin() , elementArea.width() , elementArea.height());
         
-        if (nodes[0] != nullptr) //check si le quadtree a été divisé
+        if (!nodes.empty()) //check si le quadtree a été divisé
         {
           int index = getIndex(element); //récupère lequel des quatre quadTree l'objet se trouve
           if(index != -1){
@@ -141,7 +158,7 @@ namespace SimpleGE
         objects.push_back(element);
 
         if(objects.size() > maxComponent && level < maxLevels){ //si le quadtree contient trop d'objet
-          if(nodes[0] != nullptr){
+          if(!nodes.empty()){
             split();
           }
           
@@ -156,17 +173,24 @@ namespace SimpleGE
             }
           }
         }
+      }catch(std::exception &e){
+        std::cout << e.what() << std::endl;
+      }
     }
     
     std::vector<ColliderComponent*> QuadTree::retrieve(std::vector<ColliderComponent*>& returnObj, ColliderComponent* element){
-      int index = getIndex(element);
-      if (index != -1 && nodes[0] != nullptr){
-        returnObj = nodes[index]->retrieve(returnObj,element);
+      try{
+        int index = getIndex(element);
+        if (index != -1 && !nodes.empty()){
+          returnObj = nodes[index]->retrieve(returnObj,element);
+        }
+        for(int i =0 ; i < objects.size(); i++){
+          returnObj.push_back(objects[i]);
+        }
+        return returnObj;
+      }catch(std::exception &e){
+        std::cout << e.what() << std::endl;
       }
-      for(int i =0 ; i < objects.size(); i++){
-        returnObj.push_back(objects[i]);
-      }
-      return returnObj;
     }
 
 } // namespace SimpleGE

@@ -65,6 +65,7 @@ namespace SimpleGE
   class QuadTree
   {
     public :
+    // -------------------- ENLEVER LE POINTEUR ----------------------
     Rectangle *rectangle ;
     QuadTree(int level, float x, float y, float width, float height) ;
 
@@ -77,14 +78,9 @@ namespace SimpleGE
 
     private :
     int maxComponent = 2;
-    int maxLevels = 5 ;
+    int maxLevels = 5;
     int level ;
     std::vector<ColliderComponent*> objects;
     std::vector<QuadTree*> nodes;
-    
-    
-    
-  
-
   };
 } // namespace SimpleGE
