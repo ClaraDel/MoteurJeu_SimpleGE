@@ -50,10 +50,10 @@ namespace SimpleGE
         const auto viewHeight = currentCamera->ViewHeight();
 
         // ------------------ ENLEVER LE POINTEUR -----------------------
-        QuadTree *quadTree = new QuadTree(0, 0, 0, viewWidth, viewHeight);
+        QuadTree quadTree (0, 0, 0, (float)viewWidth, (float)viewHeight);
 
         for (int i = 0; i < collidersVec.size(); i++) {
-          quadTree->insert(collidersVec[i]);
+          quadTree.insert(collidersVec[i]);
         }
 
         std::vector<std::pair<gsl::not_null<ColliderComponent*>, gsl::not_null<ColliderComponent*>>> collisions;
@@ -75,7 +75,7 @@ namespace SimpleGE
 
         for (int i = 0; i < collidersVec.size(); i++){
             std::vector<ColliderComponent*> returnObjects;
-            returnObjects = quadTree->retrieve(returnObjects, collidersVec[i]);
+            returnObjects = quadTree.retrieve(returnObjects, collidersVec[i]);
 
             for(int j = 0; j < returnObjects.size(); j++){
               collisions.emplace_back(collidersVec[i],returnObjects[j]);

@@ -1,3 +1,4 @@
+#include "simplege/components/collider.h"
 #include <simplege/simplege.h>
 
 using json = nlohmann::json;
@@ -77,18 +78,13 @@ namespace SimpleGE
   }
 
 
-  QuadTree::QuadTree(int level, float x, float y, float width, float height)
-	  {
-      // ----------------- ENLEVER LE POINTEUR --------------------
-      rectangle = new Rectangle(x, y, width, height);
-	  }
+  QuadTree::QuadTree(int level, float x, float y, float width, float height) : rectangle(x, y, width, height){}
 
   void QuadTree::clear(){
     try{
       objects.clear();
         for (int i = 0; i < nodes.size() ; i++){
-          nodes[i]->clear();
-          nodes[i]=NULL;
+          nodes[i].clear();
         }
     }catch(std::exception &e){
       std::cout << e.what() << std::endl;
@@ -97,12 +93,18 @@ namespace SimpleGE
 
   void QuadTree::split(){
     try{
-      // ------------------- UTILISER DES PUSH_BACK ---------------------
-      // ------------------- ENLEVER LES POINTEURS ----------------------
-      nodes[0] = new QuadTree(level + 1, rectangle->x , rectangle->y, rectangle->width/2, rectangle->height/2);
-      nodes[1] = new QuadTree(level + 1, rectangle->x + rectangle->width/2, rectangle->y, rectangle->width/2, rectangle->height/2);
-      nodes[2] = new QuadTree(level + 1, rectangle->x ,  rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
-      nodes[3] = new QuadTree(level + 1, rectangle->x + rectangle->width/2 , rectangle->y + rectangle->height/2, rectangle->width/2, rectangle->height/2);
+      QuadTree firstQuadtree (level + 1, rectangle.x , rectangle.y, rectangle.width/2, rectangle.height/2);
+      nodes.push_back(firstQuadtree);
+
+      QuadTree secondQuadtree (level + 1, rectangle.x + rectangle.width/2, rectangle.y, rectangle.width/2, rectangle.height/2);
+      nodes.push_back(secondQuadtree);
+
+      QuadTree thirdQuadtree (level + 1, rectangle.x ,  rectangle.y + rectangle.height/2, rectangle.width/2, rectangle.height/2);
+      nodes.push_back(thirdQuadtree);
+
+      QuadTree fourthQuadtree (level + 1, rectangle.x + rectangle.width/2 , rectangle.y + rectangle.height/2, rectangle.width/2, rectangle.height/2);
+      nodes.push_back(fourthQuadtree);
+
     }catch(std::exception &e){
       std::cout << e.what() << std::endl;
     }
@@ -112,8 +114,8 @@ namespace SimpleGE
       try{
         int index =-1;
         Area elementArea = element->GetArea();
-        float horizontalMidPoint = rectangle->x + rectangle->width/2;
-        float verticalMidPoint = rectangle->y + rectangle->height/2;
+        float horizontalMidPoint = rectangle.x + rectangle.width/2;
+        float verticalMidPoint = rectangle.y + rectangle.height/2;
 
         bool topQuadrant  = elementArea.yMin() < verticalMidPoint && elementArea.yMax() < verticalMidPoint;
         bool botQuadrant = elementArea.yMin() > verticalMidPoint && elementArea.yMax() > verticalMidPoint;
@@ -145,13 +147,13 @@ namespace SimpleGE
         Area elementArea = element->GetArea();
 
         // ----------------Cette variable n'est pas utilisée???--------------------
-        Rectangle* elementRect = new Rectangle(elementArea.xMin() , elementArea.yMin() , elementArea.width() , elementArea.height());
+        Rectangle elementRect(elementArea.xMin() , elementArea.yMin() , elementArea.width() , elementArea.height());
         
         if (!nodes.empty()) //check si le quadtree a été divisé
         {
           int index = getIndex(element); //récupère lequel des quatre quadTree l'objet se trouve
           if(index != -1){
-            nodes[index]->insert(element);
+            nodes[index].insert(element);
             return ;
           }
         }
@@ -166,7 +168,7 @@ namespace SimpleGE
           while(i< objects.size()) {
             int index = getIndex(objects[i]);
             if(index != -1){
-              nodes[index]->insert(objects[i]);
+              nodes[index].insert(objects[i]);
               objects.erase(objects.begin()+i);
             } else{
               i++ ;
@@ -182,7 +184,7 @@ namespace SimpleGE
       try{
         int index = getIndex(element);
         if (index != -1 && !nodes.empty()){
-          returnObj = nodes[index]->retrieve(returnObj,element);
+          returnObj = nodes[index].retrieve(returnObj,element);
         }
         for(int i =0 ; i < objects.size(); i++){
           returnObj.push_back(objects[i]);
